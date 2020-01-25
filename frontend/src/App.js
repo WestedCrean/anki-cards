@@ -3,15 +3,8 @@ import { BrowserRouter as Router, Link, Route } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
-import IconButton from '@material-ui/core/IconButton'
-import MenuIcon from '@material-ui/icons/Menu'
-import Drawer from '@material-ui/core/Drawer'
-import Button from '@material-ui/core/Button'
-import List from '@material-ui/core/List'
+import Grid from '@material-ui/core/Grid'
 import Divider from '@material-ui/core/Divider'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
 
 import Button from '@material-ui/core/Button'
 
@@ -35,7 +28,7 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(2),
   },
   title: {
-    flexGrow: 1,
+    flexGrow: 0,
   },
   link: {
     color: 'inherit',
@@ -44,64 +37,34 @@ const useStyles = makeStyles(theme => ({
   list: {},
 }))
 
-const SideList = props => (
-  <div
-    className={props.classes.list}
-    role="presentation"
-    onClick={toggleDrawer(side, false)}
-    onKeyDown={toggleDrawer(side, false)}
-  >
-    <List>
-      {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-        <ListItem button key={text}>
-          <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-          <ListItemText primary={text} />
-        </ListItem>
-      ))}
-    </List>
-  </div>
-)
-
 function NavBar() {
   const classes = useStyles()
-  const { setAuthTokens } = useAuth()
-
-  const [drawerState, setDrawerState] = React.useState(false)
-
-  const toggleDrawer = open => event => {
-    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-      return
-    }
-
-    setDrawerState(open)
-  }
+  const { authToken } = useAuth()
 
   return (
     <AppBar position="static">
       <Toolbar>
-        <IconButton
-          edge="start"
-          onClick={toggleDrawer(true)}
-          className={classes.menuButton}
-          color="inherit"
-          aria-label="menu"
-        >
-          <MenuIcon />
-        </IconButton>
-        <Drawer open={drawerState} onClose={toggleDrawer(false)}>
-          <SideList />
-        </Drawer>
-        <Typography variant="h6" className={classes.title}>
-          News
-        </Typography>
-        {setAuthTokens ? (
+        <Grid container spacing={3} direction="row" justify="left" alignItems="center">
+          {' '}
+          <Grid item>
+            <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <Typography variant="h6" className={classes.title}>
+                Moje talie
+              </Typography>
+            </Link>
+          </Grid>
+          <Grid item>
+            <Link to="/user" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <Typography variant="h6" className={classes.title}>
+                Moje Konto
+              </Typography>
+            </Link>
+          </Grid>
+        </Grid>
+        {authToken && (
           <Button color="inherit" onClick={() => setAuthTokens()}>
             Logout
           </Button>
-        ) : (
-          <Link to="/login" className={classes.link}>
-            <Button color="inherit">Login</Button>
-          </Link>
         )}
       </Toolbar>
     </AppBar>
@@ -109,14 +72,22 @@ function NavBar() {
 }
 
 export default function App() {
+  const [authToken, setAuthToken] = useState()
+
+  const setTokens = token => {
+    localStorage.setItem('authToken', token)
+    setAuthToken(token)
+  }
   return (
-    <AuthContext.Provider value={false}>
+    <AuthContext.Provider value={{ authToken, setAuthTokens: setTokens }}>
       <Router>
         <NavBar />
-
-        <Route exact path="/register" component={Register} />
-        <Route exact path="/login" component={Login} />
-        <Route exact path="/" component={Home} />
+        <Grid>
+          <Route exact path="/register" component={Register} />
+          <Route exact path="/login" component={Login} />
+          <PrivateRoute exact path="/user" component={Home} />
+          <PrivateRoute exact path="/" component={Home} />
+        </Grid>
       </Router>
     </AuthContext.Provider>
   )

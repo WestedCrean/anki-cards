@@ -1,13 +1,11 @@
-FROM node:12.13-alpine
+FROM node:12
 
 RUN mkdir -p /usr/src/node-app
 
-WORKDIR /usr/src/node-app
+WORKDIR /usr/src/app
 
-COPY package.json package-lock.json ./
+COPY backend/package*.json ./
 
 RUN npm install
 
-COPY . .
-
-EXPOSE 3000
+COPY backend/. .

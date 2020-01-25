@@ -1,32 +1,29 @@
 version: "3"
 
 services:
-  node-app:
-    build: .
-    image: node-app
-    environment:
-      - MONGODB_URL=mongodb://mongodb:27017/node-boilerplate
+  anki_node:
+    container_name: anki_node
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
     ports:
-      - "3000:3000"
+      - "8080:8080"
     depends_on:
       - mongodb
-    volumes:
-      - .:/usr/src/node-app
-    networks:
-      - node-network
+    environment:
+      - "MONGODB_URL=mongodb://mongodb:27017/anki_database"
+      - "MONGO_USERNAME=root"
+      - "MONGO_PASSWORD=example"
+      - "PORT=8080"
+    command: ["npm", "start"]
 
   mongodb:
+    container_name: mongodb
     image: mongo:4.2.2-bionic
+    restart: always
     ports:
       - "27017:27017"
-    volumes:
-      - dbdata:/data/db
-    networks:
-      - node-network
-
-volumes:
-  dbdata:
-
-networks:
-  node-network:
-    driver: bridge
+    environment:
+      - "MONGO_INITDB_ROOT_USERNAME=root"
+      - "MONGO_INITDB_ROOT_PASSWORD=example"

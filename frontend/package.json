@@ -8,7 +8,9 @@
     "@testing-library/jest-dom": "4.2.4",
     "@testing-library/react": "9.4.0",
     "@testing-library/user-event": "7.2.1",
+    "fetchival": "0.3.3",
     "install": "0.13.0",
+    "loadash": "1.0.0",
     "npm": "6.13.6",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
@@ -39,5 +41,6 @@
   },
   "devDependencies": {
     "prettier": "1.19.1"
-  }
+  },
+  "proxy": "https://localhost:8080/v1/api/"
 }
