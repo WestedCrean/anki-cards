@@ -1,18 +1,19 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
+import { useAuth } from 'context/auth'
 
 import Grid from '@material-ui/core/Grid'
 import Container from '@material-ui/core/Container'
-import Typography from '@material-ui/core/Typography'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import CardActions from '@material-ui/core/CardActions'
 import Divider from '@material-ui/core/Divider'
 import Button from '@material-ui/core/Button'
 import Input from '@material-ui/core/Input'
+import Alert from '@material-ui/lab/Alert'
+import Snackbar from '@material-ui/core/Snackbar'
 import { makeStyles } from '@material-ui/core/styles'
 
-//import authContext from '../store'
 import { login } from 'services/api.js'
 
 const useStyles = makeStyles(theme => ({
@@ -35,6 +36,22 @@ const useStyles = makeStyles(theme => ({
 
 function Login() {
   const classes = useStyles()
+  const { authTokens, setAuthTokens } = useAuth()
+  const history = useHistory()
+  const [isLoggedIn, setLoggedIn] = React.useState(false)
+  const [toastOpen, setToastOpen] = React.useState(false)
+  const [toastSeverity, setToastSeverity] = React.useState('success')
+  const [toastMessage, setToastMessage] = React.useState('')
+
+  const handleToastClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+    setToastOpen(false)
+    if (authTokens) {
+      history.push('/')
+    }
+  }
 
   const [credentials, setCredentials] = React.useState({
     email: '',
@@ -42,60 +59,72 @@ function Login() {
   })
 
   const handleChange = name => event => {
-    console.log(credentials)
     setCredentials({ ...credentials, [name]: event.target.value })
   }
 
-  const HandleLogin = e => {
-    fetch('/v1/api/auth/login', {
-      method: 'POST', // *GET, POST, PUT, DELETE, etc.
-      mode: 'cors', // no-cors, *cors, same-origin
-      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: 'same-origin', // include, *same-origin, omit
-      headers: {
-        'Content-Type': 'application/json',
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      redirect: 'follow', // manual, *follow, error
-      referrerPolicy: 'no-referrer', // no-referrer, *client
-      body: JSON.stringify({
-        email: credentials.email,
-        passwrod: credentials.password,
-      }), // body data type must match "Content-Type" header
-    })
-      .then(res => res.json())
-      .catch(e => console.log(e))
+  const HandleLogin = async () => {
+    try {
+      const res = await login(credentials.email, credentials.password)
+      if (res.status === 200) {
+        setToastSeverity('success')
+        setToastMessage('Zalogowano pomyślnie!')
+        setToastOpen(true)
+        setLoggedIn(true)
+      }
+    } catch (e) {
+      if (e.response.status === 401) {
+        setToastSeverity('error')
+        setToastMessage('Zły email lub hasło.')
+        setToastOpen(true)
+      } else if (e.response.status === 500) {
+        setToastSeverity('error')
+        setToastMessage('Błąd połączenia z serwerem.')
+        setToastOpen(true)
+      }
+    }
   }
 
   return (
-    <Container maxWidth="sm" className={classes.root}>
-      <Card className={classes.card}>
-        <form>
-          <CardContent>
-            <Grid container direction="column" alignItems="center">
-              <Grid item xs={12}>
-                <Input type="email" placeholder="Adres e-mail" onChange={handleChange('email')} />
-              </Grid>
+    <React.Fragment>
+      <Container maxWidth="sm" className={classes.root}>
+        <Card className={classes.card}>
+          <form>
+            <CardContent>
+              <Grid container direction="column" alignItems="center">
+                <Grid item xs={12}>
+                  <Input type="email" placeholder="Adres e-mail" onChange={handleChange('email')} />
+                </Grid>
 
-              <Grid item xs={12}>
-                <Input type="password" placeholder="Hasło" onChange={handleChange('password')} />
+                <Grid item xs={12}>
+                  <Input type="password" placeholder="Hasło" onChange={handleChange('password')} />
+                </Grid>
+                <Grid item xs={12}>
+                  <Divider />
+                </Grid>
               </Grid>
-              <Grid item xs={12}>
-                <Divider />
-              </Grid>
-            </Grid>
-          </CardContent>
-          <CardActions className={classes.actions}>
-            <Link to="/register" className={classes.link}>
-              <Button>Nie mam konta</Button>
-            </Link>
-            <Button variant="contained" color="primary" onSubmit={HandleLogin}>
-              Zaloguj się
-            </Button>
-          </CardActions>
-        </form>
-      </Card>
-    </Container>
+            </CardContent>
+            <CardActions className={classes.actions}>
+              <Link to="/register" className={classes.link}>
+                <Button>Nie mam konta</Button>
+              </Link>
+              <Button variant="contained" color="primary" onClick={HandleLogin}>
+                Zaloguj się
+              </Button>
+            </CardActions>
+          </form>
+        </Card>
+      </Container>
+      <Snackbar
+        open={toastOpen}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        autoHideDuration={1500}
+        onClose={handleToastClose}
+      >
+        <Alert onClose={handleToastClose} severity={toastSeverity}>
+          {toastMessage}
+        </Alert>
+      </Snackbar>
+    </React.Fragment>
   )
 }
 

@@ -28,7 +28,10 @@ export default function ProTip() {
     <Typography className={classes.root} color="textSecondary">
       <LightBulbIcon className={classes.lightBulb} />
       Przeczytaj więcej na ten temat{' '}
-      <Link href="https://www.freecodecamp.org/news/how-anki-saved-my-engineering-career-293a90f70a73/">
+      <Link
+        href="https://www.freecodecamp.org/news/how-anki-saved-my-engineering-career-293a90f70a73/"
+        target="_blank"
+      >
         tutaj
       </Link>
       .

@@ -19,6 +19,7 @@ import PrivateRoute from './PrivateRoute'
 import Home from 'scenes/home/index'
 import Login from 'scenes/auth/login'
 import Register from 'scenes/auth/register'
+import User from 'scenes/user'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -39,12 +40,12 @@ const useStyles = makeStyles(theme => ({
 
 function NavBar() {
   const classes = useStyles()
-  const { authToken } = useAuth()
+  const { authTokens, setAuthTokens } = useAuth()
 
   return (
     <AppBar position="static">
       <Toolbar>
-        <Grid container spacing={3} direction="row" justify="left" alignItems="center">
+        <Grid container spacing={3} direction="row" justify="flex-start" alignItems="center">
           {' '}
           <Grid item>
             <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -61,7 +62,7 @@ function NavBar() {
             </Link>
           </Grid>
         </Grid>
-        {authToken && (
+        {authTokens && (
           <Button color="inherit" onClick={() => setAuthTokens()}>
             Logout
           </Button>
@@ -72,20 +73,20 @@ function NavBar() {
 }
 
 export default function App() {
-  const [authToken, setAuthToken] = useState()
+  const [authTokens, setAuthTokens] = React.useState(localStorage.getItem('authTokens') || false)
 
   const setTokens = token => {
-    localStorage.setItem('authToken', token)
-    setAuthToken(token)
+    localStorage.setItem('authTokens', token)
+    setAuthTokens(token)
   }
   return (
-    <AuthContext.Provider value={{ authToken, setAuthTokens: setTokens }}>
+    <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens }}>
       <Router>
         <NavBar />
         <Grid>
           <Route exact path="/register" component={Register} />
           <Route exact path="/login" component={Login} />
-          <PrivateRoute exact path="/user" component={Home} />
+          <PrivateRoute exact path="/user" component={User} />
           <PrivateRoute exact path="/" component={Home} />
         </Grid>
       </Router>
