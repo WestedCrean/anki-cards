@@ -8,6 +8,7 @@ import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 
 const useStyles = makeStyles({
+  root: { marginBottom: 80 },
   card: {
     minWidth: 120,
     minHeight: 150,
@@ -50,7 +51,7 @@ const FlipCard = props => {
 
   const classes = useStyles({ ...props, flipped: flipped })
   return (
-    <Grid item xs={12} sm={4} md={3} {...props}>
+    <Grid item xs={12} sm={4} md={3} className={classes.root} {...props}>
       <div className={`${classes.perspective} ${classes.card}`} onClick={() => setFlipped(!flipped)}>
         <div className={classes.cardContainer} flipped={flipped}>
           <Card className={classes.front}>

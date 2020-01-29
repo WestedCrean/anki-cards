@@ -106,7 +106,7 @@ export default function CreateDeckView() {
         </Grid>
 
         <Grid container spacing={3}>
-          <CreateCard onChange={handleNewcard} />
+          <CreateCard onaddnewcard={handleNewcard} />
           {deck.cards.map(card => (
             <FlipCard front={card.front} back={card.back} />
           ))}

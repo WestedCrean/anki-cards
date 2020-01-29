@@ -11,6 +11,7 @@ import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 
 const useStyles = makeStyles({
+  root: { marginBottom: 80 },
   card: {
     minWidth: 120,
     minHeight: 150,
@@ -70,7 +71,8 @@ const CreateCard = props => {
     back: '',
   })
   const handleNewCard = () => {
-    props.onChange(cardContent)
+    props.onaddnewcard(cardContent)
+    setCardContent({ front: '', back: '' })
   }
 
   const handleChange = name => event => {
@@ -89,22 +91,25 @@ const CreateCard = props => {
 
   const classes = useStyles({ ...props, flipped: flipped })
   return (
-    <Grid item xs={12} sm={4} md={3} {...props}>
+    <Grid item xs={12} sm={4} md={3} className={classes.root} {...props}>
       <div className={`${classes.perspective} ${classes.card}`}>
         <div className={classes.cardContainer} flipped={flipped}>
           <Card className={classes.front}>
             <CardContent className={classes.content}>
-              <SideInput side={'awersu'} onInputChange={handleChange('front')} />
+              <SideInput
+                inputValue={cardContent.front}
+                side={'awersu'}
+                onInputChange={handleChange('front')}
+              />
             </CardContent>
-            <CardActions>
-              <Button fullWidth color="primary" variant="outlined" onClick={props.onButtonClick}>
-                Obróć kartę
-              </Button>
-            </CardActions>
           </Card>
           <Card className={classes.back}>
             <CardContent className={classes.content}>
-              <SideInput side={'rewersu'} onInputChange={handleChange('back')} />
+              <SideInput
+                inputValue={cardContent.back}
+                side={'rewersu'}
+                onInputChange={handleChange('back')}
+              />
             </CardContent>
           </Card>
         </div>
