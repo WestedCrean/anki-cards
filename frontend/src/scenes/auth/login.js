@@ -90,7 +90,7 @@ function Login() {
         <Card className={classes.card}>
           <form>
             <CardContent>
-              <Grid container direction="column" alignItems="center">
+              <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <Input type="email" placeholder="Adres e-mail" onChange={handleChange('email')} />
                 </Grid>

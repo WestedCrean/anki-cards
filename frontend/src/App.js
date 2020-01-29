@@ -20,6 +20,8 @@ import Home from 'scenes/home/index'
 import Login from 'scenes/auth/login'
 import Register from 'scenes/auth/register'
 import User from 'scenes/user'
+import Decks from 'scenes/decks'
+import CreateDeckView from 'scenes/decks/create'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -30,6 +32,7 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     flexGrow: 0,
+    fontSize: '1.2rem',
   },
   link: {
     color: 'inherit',
@@ -46,19 +49,19 @@ function NavBar() {
     <AppBar position="static">
       <Toolbar>
         <Grid container spacing={3} direction="row" justify="flex-start" alignItems="center">
-          {' '}
           <Grid item>
             <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <Typography variant="h6" className={classes.title}>
-                Moje talie
-              </Typography>
+              <p className={classes.title}>Strona Główna</p>
+            </Link>
+          </Grid>
+          <Grid item>
+            <Link to="/decks" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <p className={classes.title}>Talie kart</p>
             </Link>
           </Grid>
           <Grid item>
             <Link to="/user" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <Typography variant="h6" className={classes.title}>
-                Moje Konto
-              </Typography>
+              <p className={classes.title}>Twoje konto</p>
             </Link>
           </Grid>
         </Grid>
@@ -87,6 +90,8 @@ export default function App() {
           <Route exact path="/register" component={Register} />
           <Route exact path="/login" component={Login} />
           <PrivateRoute exact path="/user" component={User} />
+          <PrivateRoute exact path="/decks/create" component={CreateDeckView} />
+          <PrivateRoute exact path="/decks" component={Decks} />
           <PrivateRoute exact path="/" component={Home} />
         </Grid>
       </Router>

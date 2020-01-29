@@ -3,8 +3,7 @@ import axios from 'axios'
 const endpoints = {
   login: '/auth/login',
   register: '/auth/register',
-  logout: '/auth/logout',
-  refresh: '/auth/refresh',
+  decks: '/decks',
 }
 
 const Api = axios.create({
@@ -26,4 +25,40 @@ export const register = async (name, email, password) =>
     name,
     email,
     password,
+  })
+
+export const getDecks = async token =>
+  await Api.get(endpoints.decks, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+export const getSingleDeck = async (token, slug) =>
+  await Api.get(endpoints.decks + '/' + slug, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+export const createDeck = async (token, slug) =>
+  await Api.get(endpoints.decks + '/' + slug, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+export const deleteSingleDeck = async (token, slug) =>
+  await Api.delete(endpoints.decks + '/' + slug, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+export const uploadDeck = async (token, file) =>
+  await Api.post(endpoints.decks, file, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'multipart/form-data',
+    },
   })
