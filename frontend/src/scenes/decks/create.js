@@ -1,14 +1,11 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
-import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
 import Grid from '@material-ui/core/Grid'
 import Input from '@material-ui/core/Input'
 import Button from '@material-ui/core/Button'
 
-import Deck from './deck'
-import { ActionCard } from './actionCards'
 import CreateCard from './createCard'
 import FlipCard from './flipCard'
 
@@ -78,7 +75,7 @@ export default function CreateDeckView() {
         setCardFinished(false)
       }
     }
-  }, [deck])
+  }, [deck, cardFinished])
 
   return (
     <Container>

@@ -4,9 +4,10 @@ import Container from '@material-ui/core/Container'
 import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
 import Grid from '@material-ui/core/Grid'
-
+import Button from '@material-ui/core/Button'
 import Deck from './deck'
 import { ActionCard } from './actionCards'
+import red from '@material-ui/core/colors/red'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -34,12 +35,21 @@ const useStyles = makeStyles(theme => ({
   add: {
     fontSize: '3rem',
   },
+  deleteBtn: {
+    float: 'right',
+    backgroundColor: red.A400,
+    color: 'white',
+    '&:hover': {
+      background: red.A200,
+    },
+  },
 }))
 
 export default function DeckView() {
   const classes = useStyles()
 
-  const Decks = [
+  const [deletionMode, setDeletionMode] = React.useState(false)
+  const [decks, setDecks] = React.useState([
     { name: 'Talia1', featured: true, slug: 'talia-1', category: 'Computer Science' },
     { name: 'Talia2', featured: false, slug: 'talia-2', category: 'Physics' },
     { name: 'Talia3', featured: false, slug: 'talia-3', category: 'Math' },
@@ -50,7 +60,19 @@ export default function DeckView() {
     { name: 'Talia8', featured: false, slug: 'talia-8', category: 'Economy' },
     { name: 'Talia9', featured: true, slug: 'talia-9', category: 'Philosophy' },
     { name: 'Talia10', featured: false, slug: 'talia-10', category: 'Economy' },
-  ]
+  ])
+
+  const handleDelete = slug => {
+    const newDecks = decks.slice()
+    /* api call */
+    setDecks(newDecks.filter(e => e.slug !== slug))
+  }
+
+  React.useEffect(() => {
+    if (decks.length === 0 && deletionMode) {
+      setDeletionMode(false)
+    }
+  }, [decks, deletionMode])
 
   return (
     <Container>
@@ -58,17 +80,31 @@ export default function DeckView() {
         <Typography variant="h4" component="h1" gutterBottom align="left">
           Twoje talie
         </Typography>
+
+        <Button
+          variant="contained"
+          className={classes.deleteBtn}
+          disabled={decks.length === 0}
+          onClick={() => {
+            setDeletionMode(!deletionMode)
+          }}
+        >
+          Usuń talię
+        </Button>
+
         <Grid container spacing={3}>
-          {Decks.map((el, i) => (
+          {decks.map((el, i) => (
             <Deck
               title={el.name}
               key={'deck-' + i}
               featured={el.featured}
               category={el.category}
               slug={el.slug}
+              deletionMode={deletionMode}
+              handleDelete={handleDelete}
             />
           ))}
-          <ActionCard to="/decks/create" backgroundColor={'#00b5a0'}>
+          <ActionCard to="/decks/create" backgroundColor={'#ffbd45'}>
             <p>Stwórz nową talię</p>
           </ActionCard>
         </Grid>

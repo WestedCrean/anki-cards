@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
 
 function Login() {
   const classes = useStyles()
-  const { authTokens, setAuthTokens } = useAuth()
+  const { authTokens } = useAuth()
   const history = useHistory()
   const [isLoggedIn, setLoggedIn] = React.useState(false)
   const [toastOpen, setToastOpen] = React.useState(false)

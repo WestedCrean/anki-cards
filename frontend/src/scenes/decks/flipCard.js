@@ -1,11 +1,9 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
-import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
-import Button from '@material-ui/core/Button'
 
 const useStyles = makeStyles({
   root: { marginBottom: 80 },
@@ -30,6 +28,8 @@ const useStyles = makeStyles({
     left: 0,
     zIndex: 2,
     transform: 'rotateY(0deg)',
+    overflowY: 'scroll',
+    padding: '1rem',
   },
   back: {
     height: 210,
@@ -39,12 +39,25 @@ const useStyles = makeStyles({
     top: 0,
     left: 0,
     transform: 'rotateY(180deg)',
+    overflowY: 'scroll',
+    padding: '1rem',
   },
-  content: {},
+  cardTypography: {
+    fontWeight: 400,
+  },
   perspective: {
     perspective: 1000,
   },
 })
+const Content = ({ classes, side, ...props }) => (
+  <Card className={classes[side]}>
+    <CardContent>
+      <Typography variant="h6" className={classes.cardTypography}>
+        {props.children}
+      </Typography>
+    </CardContent>
+  </Card>
+)
 
 const FlipCard = props => {
   const [flipped, setFlipped] = React.useState(false)
@@ -54,20 +67,11 @@ const FlipCard = props => {
     <Grid item xs={12} sm={4} md={3} className={classes.root} {...props}>
       <div className={`${classes.perspective} ${classes.card}`} onClick={() => setFlipped(!flipped)}>
         <div className={classes.cardContainer} flipped={flipped}>
-          <Card className={classes.front}>
-            <CardContent className={classes.content}>
-              <Typography variant="h4" component="h4" gutterBottom align="left">
-                {props.front}
-              </Typography>
-            </CardContent>
-          </Card>
-          <Card className={classes.back}>
-            <CardContent className={classes.content}>
-              <Typography variant="h4" component="h4" gutterBottom align="left">
-                {props.back}
-              </Typography>
-            </CardContent>
-          </Card>
+          {['front', 'back'].map(side => (
+            <Content classes={classes} side={side}>
+              {props[side]}
+            </Content>
+          ))}
         </div>
       </div>
     </Grid>

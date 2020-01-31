@@ -1,11 +1,7 @@
 import React from 'react'
-import { Link as RouterLink } from 'react-router-dom'
-import Link from '@material-ui/core/Link'
 import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
-import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
-import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
@@ -73,6 +69,7 @@ const CreateCard = props => {
   const handleNewCard = () => {
     props.onaddnewcard(cardContent)
     setCardContent({ front: '', back: '' })
+    setFlipped(false)
   }
 
   const handleChange = name => event => {
@@ -87,7 +84,7 @@ const CreateCard = props => {
         setCardFinished(false)
       }
     }
-  }, [cardContent])
+  }, [cardContent, cardFinished])
 
   const classes = useStyles({ ...props, flipped: flipped })
   return (

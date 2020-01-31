@@ -1,0 +1,30 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Program",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/src/index.js",
+      "env": {
+        "NODE_ENV": "development",
+        "MONGODB_URL": "mongodb+srv://admin:5ik1yrkSUOUOYId4@anki-cards-gjj6q.mongodb.net/test?retryWrites=true&w=majority",
+        "MONGO_USERNAME": "admin",
+        "MONGO_PASSWORD": "5ik1yrkSUOUOYId4",
+        "PORT": "8081",
+        "JWT_SECRET": "thisisasamplesecret",
+        "JWT_ACCESS_EXPIRATION_MINUTES": "30",
+        "JWT_REFRESH_EXPIRATION_DAYS": "30",
+        "SMTP_HOST": "smtp.ethereal.email",
+        "SMTP_PORT": "587",
+        "SMTP_USERNAME": "morris.oconner67@ethereal.email",
+        "SMTP_PASSWORD": "nyHNRAyUvfEg9UMsWR",
+        "EMAIL_FROM": "support@ankiapp.com"
+      }
+    }
+  ]
+}

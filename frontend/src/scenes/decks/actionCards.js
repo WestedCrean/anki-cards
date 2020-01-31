@@ -14,6 +14,7 @@ const useStyles = makeStyles({
     height: '100%',
     cursor: 'pointer',
     backgroundColor: props => props.backgroundColor,
+    color: 'white',
   },
   pos: {
     marginBottom: 12,
@@ -28,7 +29,7 @@ export const ActionCard = props => {
       <Link underline="none" component={RouterLink} to={props.to}>
         <Card className={classes.card}>
           <CardContent>
-            <Typography variant="h5" component="h2" gutterBottom>
+            <Typography variant="h5" component="h2" styles={{ fontWeight: 500 }} gutterBottom>
               {props.children}
             </Typography>
           </CardContent>
