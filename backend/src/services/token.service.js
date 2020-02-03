@@ -9,7 +9,7 @@ const generateToken = (userId, expires, secret = config.jwt.secret) => {
   const payload = {
     sub: userId,
     iat: moment().unix(),
-    exp: expires.unix(),
+    exp: expires.unix()
   }
   return jwt.sign(payload, secret)
 }
@@ -20,14 +20,32 @@ const saveToken = async (token, userId, expires, type, blacklisted = false) => {
     user: userId,
     expires: expires.toDate(),
     type,
-    blacklisted,
+    blacklisted
   })
   return tokenDoc
 }
 
 const verifyToken = async (token, type) => {
   const payload = jwt.verify(token, config.jwt.secret)
-  const tokenDoc = await Token.findOne({ token, type, user: payload.sub, blacklisted: false })
+  const tokenDoc = await Token.findOne({
+    token,
+    type,
+    user: payload.sub,
+    blacklisted: false
+  })
+  if (!tokenDoc) {
+    throw new AppError(httpStatus.NOT_FOUND, "Token not found")
+  }
+  return tokenDoc
+}
+
+const getUserByToken = async token => {
+  const tokenDoc = await Token.findOne(
+    {
+      token
+    },
+    "token"
+  )
   if (!tokenDoc) {
     throw new AppError(httpStatus.NOT_FOUND, "Token not found")
   }
@@ -37,5 +55,5 @@ const verifyToken = async (token, type) => {
 module.exports = {
   generateToken,
   saveToken,
-  verifyToken,
+  verifyToken
 }

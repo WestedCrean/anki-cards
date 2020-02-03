@@ -3,7 +3,7 @@ const catchAsync = require("../utils/catchAsync")
 const { deckService } = require("../services")
 
 const createDeck = catchAsync(async (req, res) => {
-  const deck = await deckService.createDeck(req.body)
+  const deck = await deckService.createDeck(req.body, req.user)
   res.status(httpStatus.CREATED).send(deck.transform())
 })
 
@@ -15,7 +15,6 @@ const getDecks = catchAsync(async (req, res) => {
 
 const getDeck = catchAsync(async (req, res) => {
   const deck = await deckService.getDeckById(req.user, req.params.deckId)
-  console.log({ deck: Object.keys(deck) })
   res.send(deck.transform())
 })
 

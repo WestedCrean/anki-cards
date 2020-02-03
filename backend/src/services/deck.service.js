@@ -5,20 +5,26 @@ const { Deck } = require("../models")
 const { getQueryOptions } = require("../utils/service.util")
 const userService = require("./user.service")
 
-const createDeck = async (user, deckBody) => {
+const createDeck = async (deckBody, user) => {
   const deck = await Deck.create({ ...deckBody, user: user.id })
   return deck
 }
 
-const getDecks = async userId => {
-  const decks = await Deck.find({ user: userId }, 'id name topic')
+const getDecks = async user => {
+  const decks = await Deck.find({ user: user.id }, "id name topic")
   return decks
 }
 
 const getDeckById = async (user, deckId) => {
-  const deck = await Deck.findOne({ id: deckId }, 'id name cards topic')
+  const deck = await Deck.findById(deckId)
   if (!deck) {
     throw new AppError(httpStatus.NOT_FOUND, "Nie znaleziono talii o tym id")
+  }
+  if (deck.user != user.id) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      `Znaleziono talię, ale nalezy do innego uzytkownika`
+    )
   }
   return deck
 }

@@ -10,14 +10,13 @@ const createDeck = {
         front: Joi.string().required(),
         back: Joi.string().required()
       })
-    ),
+    )
   })
 }
 
 const getDecks = {
   query: Joi.object().keys({
     name: Joi.string(),
-    role: Joi.string(),
     sortBy: Joi.string(),
     limit: Joi.number().integer(),
     page: Joi.number().integer()
