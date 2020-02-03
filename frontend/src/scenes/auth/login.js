@@ -9,7 +9,7 @@ import CardContent from '@material-ui/core/CardContent'
 import CardActions from '@material-ui/core/CardActions'
 import Divider from '@material-ui/core/Divider'
 import Button from '@material-ui/core/Button'
-import Input from '@material-ui/core/Input'
+import TextField from '@material-ui/core/TextField'
 import Alert from '@material-ui/lab/Alert'
 import Snackbar from '@material-ui/core/Snackbar'
 import { makeStyles } from '@material-ui/core/styles'
@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
 
 function Login() {
   const classes = useStyles()
-  const { authTokens } = useAuth()
+  const { authTokens, setAuthTokens } = useAuth()
   const history = useHistory()
   const [isLoggedIn, setLoggedIn] = React.useState(false)
   const [toastOpen, setToastOpen] = React.useState(false)
@@ -66,9 +66,14 @@ function Login() {
     try {
       const res = await login(credentials.email, credentials.password)
       if (res.status === 200) {
+        const user = res.data.user
+        const tokens = res.data.tokens
+
         setToastSeverity('success')
         setToastMessage('Zalogowano pomyślnie!')
         setToastOpen(true)
+        setAuthTokens({ tokens, user })
+        localStorage.setItem('authTokens', JSON.stringify({ tokens, user }))
         setLoggedIn(true)
       }
     } catch (e) {
@@ -84,6 +89,8 @@ function Login() {
     }
   }
 
+  React.useEffect(() => console.log({ authTokens }), [authTokens])
+
   return (
     <React.Fragment>
       <Container maxWidth="sm" className={classes.root}>
@@ -92,11 +99,21 @@ function Login() {
             <CardContent>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
-                  <Input type="email" placeholder="Adres e-mail" onChange={handleChange('email')} />
+                  <TextField
+                    fullWidth
+                    type="email"
+                    placeholder="Adres e-mail"
+                    onChange={handleChange('email')}
+                  />
                 </Grid>
 
                 <Grid item xs={12}>
-                  <Input type="password" placeholder="Hasło" onChange={handleChange('password')} />
+                  <TextField
+                    fullWidth
+                    type="password"
+                    placeholder="Hasło"
+                    onChange={handleChange('password')}
+                  />
                 </Grid>
                 <Grid item xs={12}>
                   <Divider />

@@ -30,35 +30,27 @@ export const register = async (name, email, password) =>
 export const getDecks = async token =>
   await Api.get(endpoints.decks, {
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${token.access.token}`,
     },
   })
 
 export const getSingleDeck = async (token, slug) =>
   await Api.get(endpoints.decks + '/' + slug, {
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${token.access.token}`,
     },
   })
 
-export const createDeck = async (token, slug) =>
-  await Api.get(endpoints.decks + '/' + slug, {
+export const createDeck = async (token, data) =>
+  await Api.post(endpoints.decks, data, {
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${token.access.token}`,
     },
   })
 
-export const deleteSingleDeck = async (token, slug) =>
-  await Api.delete(endpoints.decks + '/' + slug, {
+export const deleteSingleDeck = async (token, deckId) =>
+  await Api.delete(endpoints.decks + '/' + deckId, {
     headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-
-export const uploadDeck = async (token, file) =>
-  await Api.post(endpoints.decks, file, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'multipart/form-data',
+      Authorization: `Bearer ${token.access.token}`,
     },
   })

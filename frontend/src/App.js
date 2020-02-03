@@ -72,7 +72,7 @@ function NavBar() {
 }
 
 export default function App() {
-  const [authTokens, setAuthTokens] = React.useState(localStorage.getItem('authTokens') || false)
+  const [authTokens, setAuthTokens] = React.useState(false)
 
   const setTokens = token => {
     localStorage.setItem('authTokens', token)

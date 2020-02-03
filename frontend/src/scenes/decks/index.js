@@ -7,7 +7,11 @@ import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import Deck from './deck'
 import { ActionCard } from './actionCards'
+import Alert from '@material-ui/lab/Alert'
+import Snackbar from '@material-ui/core/Snackbar'
 import red from '@material-ui/core/colors/red'
+import { useAuth } from 'context/auth'
+import { getDecks } from 'services/api'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -47,6 +51,35 @@ const useStyles = makeStyles(theme => ({
 
 export default function DeckView() {
   const classes = useStyles()
+  const { authTokens } = useAuth()
+
+  const [toastOpen, setToastOpen] = React.useState(false)
+  const [toastSeverity, setToastSeverity] = React.useState('success')
+  const [toastMessage, setToastMessage] = React.useState('')
+
+  const handleToastClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+    setToastOpen(false)
+  }
+
+  getDecks(authTokens.tokens)
+    .then(res => {
+      if (res.status === 200) {
+        setDecks(res.data)
+      }
+    })
+    .catch(e => {
+      setToastSeverity('error')
+      console.log({ e })
+      if (e.response) {
+        setToastMessage('Nieoczekiwany błąd po stronie serwera.')
+      } else {
+        setToastMessage('Utracono połączenie z serwerem.')
+      }
+      setToastOpen(true)
+    })
 
   const [deletionMode, setDeletionMode] = React.useState(false)
   const [decks, setDecks] = React.useState([
@@ -62,6 +95,8 @@ export default function DeckView() {
     { name: 'Talia10', featured: false, slug: 'talia-10', category: 'Economy' },
   ])
 
+  React.useEffect(e => console.log({decks}),[decks])
+
   const handleDelete = slug => {
     const newDecks = decks.slice()
     /* api call */
@@ -75,40 +110,52 @@ export default function DeckView() {
   }, [decks, deletionMode])
 
   return (
-    <Container>
-      <Box my={4}>
-        <Typography variant="h4" component="h1" gutterBottom align="left">
-          Twoje talie
-        </Typography>
+    <React.Fragment>
+      <Container>
+        <Box my={4}>
+          <Typography variant="h4" component="h1" gutterBottom align="left">
+            Twoje talie
+          </Typography>
 
-        <Button
-          variant="contained"
-          className={classes.deleteBtn}
-          disabled={decks.length === 0}
-          onClick={() => {
-            setDeletionMode(!deletionMode)
-          }}
-        >
-          Usuń talię
-        </Button>
+          <Button
+            variant="contained"
+            className={classes.deleteBtn}
+            disabled={decks.length === 0}
+            onClick={() => {
+              setDeletionMode(!deletionMode)
+            }}
+          >
+            Usuń talię
+          </Button>
 
-        <Grid container spacing={3}>
-          {decks.map((el, i) => (
-            <Deck
-              title={el.name}
-              key={'deck-' + i}
-              featured={el.featured}
-              category={el.category}
-              slug={el.slug}
-              deletionMode={deletionMode}
-              handleDelete={handleDelete}
-            />
-          ))}
-          <ActionCard to="/decks/create" backgroundColor={'#ffbd45'}>
-            <p>Stwórz nową talię</p>
-          </ActionCard>
-        </Grid>
-      </Box>
-    </Container>
+          <Grid container spacing={3}>
+            {decks.map((el, i) => (
+              <Deck
+                title={el.name}
+                key={'deck-' + i}
+                featured={el.featured}
+                category={el.category}
+                slug={el.slug}
+                deletionMode={deletionMode}
+                handleDelete={handleDelete}
+              />
+            ))}
+            <ActionCard to="/decks/create" backgroundColor={'#ffbd45'}>
+              <p>Stwórz nową talię</p>
+            </ActionCard>
+          </Grid>
+        </Box>
+      </Container>
+      <Snackbar
+        open={toastOpen}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        autoHideDuration={1500}
+        onClose={handleToastClose}
+      >
+        <Alert onClose={handleToastClose} severity={toastSeverity}>
+          {toastMessage}
+        </Alert>
+      </Snackbar>
+    </React.Fragment>
   )
 }
