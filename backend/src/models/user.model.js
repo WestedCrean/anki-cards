@@ -1,5 +1,6 @@
 const mongoose = require("mongoose")
 const validator = require("validator")
+const bcrypt = require("bcryptjs")
 const { omit, pick } = require("lodash")
 
 const userSchema = mongoose.Schema(
@@ -36,7 +37,7 @@ const userSchema = mongoose.Schema(
     },
     role: {
       type: String,
-      required: true
+      default: 'user'
     }
   },
   {
@@ -46,17 +47,17 @@ const userSchema = mongoose.Schema(
   }
 )
 
-userSchema.methods.toJSON = function() {
+userSchema.methods.toJSON = function () {
   const user = this
   return omit(user.toObject(), ["password"])
 }
 
-userSchema.methods.transform = function() {
+userSchema.methods.transform = function () {
   const user = this
   return pick(user.toJSON(), ["id", "email", "name", "role"])
 }
 
-userSchema.pre("save", async function(next) {
+userSchema.pre("save", async function (next) {
   const user = this
   if (user.isModified("password")) {
     user.password = await bcrypt.hash(user.password, 8)

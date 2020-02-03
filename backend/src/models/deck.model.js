@@ -1,4 +1,5 @@
 const mongoose = require("mongoose")
+const { omit, pick } = require("lodash")
 
 const cardSchema = mongoose.Schema({
   front: String,
@@ -10,6 +11,11 @@ const deckSchema = mongoose.Schema(
     name: {
       type: String,
       required: true,
+      trim: true
+    },
+    topic: {
+      type: String,
+      required: false,
       trim: true
     },
     user: {
@@ -26,12 +32,13 @@ const deckSchema = mongoose.Schema(
   }
 )
 
-deckSchema.methods.toJSON = function() {
+deckSchema.methods.toJSON = function () {
   return this.toObject()
 }
 
-deckSchema.methods.transform = function() {
-  return this.toJSON()
+deckSchema.methods.transform = function () {
+  const deck = this
+  return pick(deck.toJSON(), ["id", "cards", "name", "topic"])
 }
 
 const Deck = mongoose.model("Deck", deckSchema)

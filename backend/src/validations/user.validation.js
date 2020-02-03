@@ -11,7 +11,6 @@ const createUser = {
       .custom(password),
     name: Joi.string().required(),
     role: Joi.string()
-      .required()
       .valid("user", "admin"),
   }),
 }

@@ -11,7 +11,7 @@ const verifyCallback = (req, resolve, reject, requiredRights) => async (
   if (err || info || !user) {
     return reject(new AppError(httpStatus.UNAUTHORIZED, "Please authenticate"))
   }
-  req.user = await user
+  req.user = user
 
   if (requiredRights.length) {
     const userRights = roleRights.get(user.role)

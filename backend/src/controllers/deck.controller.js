@@ -8,20 +8,19 @@ const createDeck = catchAsync(async (req, res) => {
 })
 
 const getDecks = catchAsync(async (req, res) => {
-  console.log({ req: req })
-  console.log({ user: req.user })
-  const decks = await deckService.getDecks(req.query)
+  const decks = await deckService.getDecks(req.user)
   const response = decks.map(deck => deck.transform())
   res.send(response)
 })
 
 const getDeck = catchAsync(async (req, res) => {
-  const deck = await deckService.getDeckById(req.params.deckId)
+  const deck = await deckService.getDeckById(req.user, req.params.deckId)
+  console.log({ deck: Object.keys(deck) })
   res.send(deck.transform())
 })
 
 const deleteDeck = catchAsync(async (req, res) => {
-  await deckService.deleteDeck(req.params.deckId)
+  await deckService.deleteDeck(req.user, req.params.deckId)
   res.status(httpStatus.NO_CONTENT).send()
 })
 

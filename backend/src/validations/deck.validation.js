@@ -4,13 +4,13 @@ const { objectId } = require("./custom.validation")
 const createDeck = {
   body: Joi.object().keys({
     name: Joi.string().required(),
+    topic: Joi.string(),
     cards: Joi.array().items(
       Joi.object({
         front: Joi.string().required(),
         back: Joi.string().required()
       })
     ),
-    user: Joi.string().custom(objectId)
   })
 }
 
@@ -26,13 +26,13 @@ const getDecks = {
 
 const getDeck = {
   params: Joi.object().keys({
-    userId: Joi.string().custom(objectId)
+    deckId: Joi.string().custom(objectId)
   })
 }
 
 const deleteDeck = {
   params: Joi.object().keys({
-    userId: Joi.string().custom(objectId)
+    deckId: Joi.string().custom(objectId)
   })
 }
 
