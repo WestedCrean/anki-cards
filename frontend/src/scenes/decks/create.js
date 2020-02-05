@@ -9,7 +9,7 @@ import Button from '@material-ui/core/Button'
 
 import CreateCard from './createCard'
 import FlipCard from './flipCard'
-import { createDeck } from 'services/api'
+import { createDeck } from 'services/decks'
 import { useAuth } from 'context/auth'
 import Alert from '@material-ui/lab/Alert'
 import Snackbar from '@material-ui/core/Snackbar'
@@ -21,6 +21,13 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-around',
     overflow: 'hidden',
     backgroundColor: theme.palette.background.paper,
+  },
+  deckNameContainer: {
+    paddingRight: 16,
+    [theme.breakpoints.down('sm')]: {
+      paddingRight: 'initial',
+      paddingBottom: 16
+    },
   },
   gridList: {
     transform: 'translateZ(0)',
@@ -45,12 +52,15 @@ const useStyles = makeStyles(theme => ({
   },
   submitButton: {
     height: '100%',
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+    },
   },
 }))
 
 export default function CreateDeckView() {
   const classes = useStyles()
-  const { authTokens } = useAuth()
+  const { authTokens, setAuthTokens } = useAuth()
   const history = useHistory()
   const [toastOpen, setToastOpen] = React.useState(false)
   const [toastSeverity, setToastSeverity] = React.useState('success')
@@ -82,10 +92,7 @@ export default function CreateDeckView() {
   const submitCard = async () => {
     if (cardFinished) {
       try {
-        console.log({ authTokens })
-        console.log({ tokens: authTokens.tokens })
-        console.log({ access: authTokens.tokens.access })
-        const res = await createDeck(authTokens.tokens.access, deck)
+        const res = await createDeck(authTokens.tokens, deck)
         if (res.status === 201) {
           setToastSeverity('success')
           setToastMessage('Pomyślnie utworzono nową talię')
@@ -120,16 +127,17 @@ export default function CreateDeckView() {
       <Container>
         <Box my={4}>
           <Grid container style={{ marginBottom: '3rem' }}>
-            <Grid xs={5} md={5} item style={{ paddingRight: 16 }}>
+            <Grid xs={12} md={5} item className={classes.deckNameContainer}>
               <Input
                 placeholder={'Nowa talia'}
-                fullwidth
+                fullWidth
                 onChange={handleNameChange}
                 className={classes.deckName}
               />
             </Grid>
-            <Grid xs={5} md={5} alignItems="center" item>
+            <Grid xs={12} md={5} item>
               <Button
+
                 disabled={!cardFinished}
                 variant="contained"
                 color="primary"
@@ -142,7 +150,7 @@ export default function CreateDeckView() {
           </Grid>
 
           <Grid container spacing={3}>
-            <CreateCard onaddnewcard={handleNewcard} />
+            <CreateCard handleNewcard={handleNewcard} />
             {deck.cards.map(card => (
               <FlipCard front={card.front} back={card.back} />
             ))}

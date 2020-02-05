@@ -11,7 +11,8 @@ import Alert from '@material-ui/lab/Alert'
 import Snackbar from '@material-ui/core/Snackbar'
 import red from '@material-ui/core/colors/red'
 import { useAuth } from 'context/auth'
-import { getDecks } from 'services/api'
+import { getDecks, deleteDeck } from 'services/decks'
+import { refreshToken } from 'services/auth'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -49,9 +50,9 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-export default function DeckView() {
+function DeckView() {
   const classes = useStyles()
-  const { authTokens } = useAuth()
+  const { authTokens, setAuthTokens } = useAuth()
 
   const [toastOpen, setToastOpen] = React.useState(false)
   const [toastSeverity, setToastSeverity] = React.useState('success')
@@ -64,50 +65,69 @@ export default function DeckView() {
     setToastOpen(false)
   }
 
-  getDecks(authTokens.tokens)
-    .then(res => {
+  const [deletionMode, setDeletionMode] = React.useState(false)
+  const [decks, setDecks] = React.useState([])
+
+  async function fetchDecks() {
+    try {
+      const res = await getDecks(authTokens.tokens)
       if (res.status === 200) {
         setDecks(res.data)
       }
-    })
-    .catch(e => {
+    } catch (e) {
       setToastSeverity('error')
       console.log({ e })
       if (e.response) {
-        setToastMessage('Nieoczekiwany błąd po stronie serwera.')
+        if (e.response.status === 401) {
+          const authRes = await refreshToken(authTokens.tokens)
+          if (authRes.status === 200) {
+            const user = authRes.data.user
+            const tokens = authRes.data.tokens
+            setAuthTokens({ tokens, user })
+            setToastMessage('Spróbuj ponownie.')
+          }
+        } else {
+          setToastMessage('Nieoczekiwany błąd po stronie serwera.')
+        }
       } else {
         setToastMessage('Utracono połączenie z serwerem.')
       }
       setToastOpen(true)
-    })
-
-  const [deletionMode, setDeletionMode] = React.useState(false)
-  const [decks, setDecks] = React.useState([
-    { name: 'Talia1', featured: true, slug: 'talia-1', category: 'Computer Science' },
-    { name: 'Talia2', featured: false, slug: 'talia-2', category: 'Physics' },
-    { name: 'Talia3', featured: false, slug: 'talia-3', category: 'Math' },
-    { name: 'Talia4', featured: false, slug: 'talia-4', category: 'Philosophy' },
-    { name: 'Talia5', featured: false, slug: 'talia-5', category: 'Math' },
-    { name: 'Talia6', featured: false, slug: 'talia-6', category: 'History' },
-    { name: 'Talia7', featured: false, slug: 'talia-7', category: 'Physics' },
-    { name: 'Talia8', featured: false, slug: 'talia-8', category: 'Economy' },
-    { name: 'Talia9', featured: true, slug: 'talia-9', category: 'Philosophy' },
-    { name: 'Talia10', featured: false, slug: 'talia-10', category: 'Economy' },
-  ])
-
-  React.useEffect(e => console.log({decks}),[decks])
-
-  const handleDelete = slug => {
-    const newDecks = decks.slice()
-    /* api call */
-    setDecks(newDecks.filter(e => e.slug !== slug))
+    }
   }
+
+  async function handleDelete(deckId) {
+    const newDecks = decks.slice()
+    try {
+      const res = await deleteDeck(authTokens.tokens, deckId)
+      if (res.status === 204) {
+        setDecks(newDecks.filter(e => e.id !== deckId))
+        await fetchDecks()
+      }
+    } catch (e) {
+      setToastSeverity('error')
+      if (e.response) {
+        setToastMessage('Nieoczekiwany błąd po stronie serwera.')
+      } else {
+        if (e.response) {
+          setToastMessage('Utracono połączenie z serwerem.')
+        }
+      }
+      setToastOpen(true)
+    }
+
+  }
+
 
   React.useEffect(() => {
     if (decks.length === 0 && deletionMode) {
       setDeletionMode(false)
     }
   }, [decks, deletionMode])
+
+  React.useEffect(() => {
+    fetchDecks()
+  }, [])
 
   return (
     <React.Fragment>
@@ -133,14 +153,13 @@ export default function DeckView() {
               <Deck
                 title={el.name}
                 key={'deck-' + i}
-                featured={el.featured}
                 category={el.category}
-                slug={el.slug}
+                deckid={el.id}
                 deletionMode={deletionMode}
-                handleDelete={handleDelete}
+                onChange={handleDelete}
               />
             ))}
-            <ActionCard to="/decks/create" backgroundColor={'#ffbd45'}>
+            <ActionCard to="/decks/create" color={'#ffbd45'}>
               <p>Stwórz nową talię</p>
             </ActionCard>
           </Grid>
@@ -159,3 +178,12 @@ export default function DeckView() {
     </React.Fragment>
   )
 }
+
+function isDeckViewSame(prevProps, nextProps) {
+
+  return true
+}
+
+const MemoDeckView = React.memo(DeckView, isDeckViewSame)
+
+export default DeckView

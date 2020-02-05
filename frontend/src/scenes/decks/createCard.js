@@ -67,7 +67,7 @@ const CreateCard = props => {
     back: '',
   })
   const handleNewCard = () => {
-    props.onaddnewcard(cardContent)
+    props.handleNewcard(cardContent)
     setCardContent({ front: '', back: '' })
     setFlipped(false)
   }
@@ -86,11 +86,12 @@ const CreateCard = props => {
     }
   }, [cardContent, cardFinished])
 
-  const classes = useStyles({ ...props, flipped: flipped })
+
+  const classes = useStyles({ flipped })
   return (
-    <Grid item xs={12} sm={4} md={3} className={classes.root} {...props}>
+    <Grid item xs={12} sm={4} md={3} className={classes.root} >
       <div className={`${classes.perspective} ${classes.card}`}>
-        <div className={classes.cardContainer} flipped={flipped}>
+        <div className={classes.cardContainer} >
           <Card className={classes.front}>
             <CardContent className={classes.content}>
               <SideInput

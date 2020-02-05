@@ -78,6 +78,7 @@ export default function App() {
     localStorage.setItem('authTokens', token)
     setAuthTokens(token)
   }
+
   return (
     <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens }}>
       <Router>

@@ -1,6 +1,5 @@
 import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
-import { useAuth } from 'context/auth'
 
 import Grid from '@material-ui/core/Grid'
 import Container from '@material-ui/core/Container'
@@ -15,7 +14,7 @@ import Alert from '@material-ui/lab/Alert'
 import Snackbar from '@material-ui/core/Snackbar'
 import { makeStyles } from '@material-ui/core/styles'
 
-import { register } from 'services/api.js'
+import { register } from 'services/auth'
 
 const useStyles = makeStyles(theme => ({
   root: {

@@ -13,7 +13,7 @@ const useStyles = makeStyles({
     minHeight: 210,
     height: '100%',
     cursor: 'pointer',
-    backgroundColor: props => props.backgroundColor,
+    backgroundColor: props => props.color,
     color: 'white',
   },
   pos: {

@@ -26,12 +26,12 @@ export default function Deck(props) {
 
   const handleDelete = e => {
     e.preventDefault()
-    props.handleDelete(props.slug)
+    props.onChange(props.deckid)
   }
 
   return (
-    <Grid item xs={12} sm={4} md={3} {...props}>
-      <Link underline="none" component={RouterLink} to={`/decks/${props.slug}`}>
+    <Grid item xs={12} sm={4} md={3}>
+      <Link underline="none" component={RouterLink} to={`/decks/${props.deckid}`}>
         <Card className={classes.card}>
           <CardHeader
             action={
@@ -41,7 +41,7 @@ export default function Deck(props) {
                 {...(props.deletionMode ? { timeout: 1000 } : {})}
               >
                 <IconButton aria-label="delete" onClick={handleDelete}>
-                  <DeleteIcon className={classes.deleteBtn} deletionMode={props.deletionMode} />
+                  <DeleteIcon className={classes.deleteBtn} />
                 </IconButton>
               </Grow>
             }

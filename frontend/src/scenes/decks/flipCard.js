@@ -62,11 +62,11 @@ const Content = ({ classes, side, ...props }) => (
 const FlipCard = props => {
   const [flipped, setFlipped] = React.useState(false)
 
-  const classes = useStyles({ ...props, flipped: flipped })
+  const classes = useStyles({ flipped })
   return (
-    <Grid item xs={12} sm={4} md={3} className={classes.root} {...props}>
+    <Grid item xs={12} sm={4} md={3} className={classes.root} >
       <div className={`${classes.perspective} ${classes.card}`} onClick={() => setFlipped(!flipped)}>
-        <div className={classes.cardContainer} flipped={flipped}>
+        <div className={classes.cardContainer} >
           {['front', 'back'].map(side => (
             <Content classes={classes} side={side}>
               {props[side]}

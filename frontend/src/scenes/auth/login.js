@@ -14,7 +14,7 @@ import Alert from '@material-ui/lab/Alert'
 import Snackbar from '@material-ui/core/Snackbar'
 import { makeStyles } from '@material-ui/core/styles'
 
-import { login } from 'services/api.js'
+import { login } from 'services/auth'
 
 const useStyles = makeStyles(theme => ({
   root: {
