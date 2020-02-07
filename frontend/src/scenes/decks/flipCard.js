@@ -20,7 +20,7 @@ const useStyles = makeStyles({
     transform: props => (props.flipped ? 'rotateY(180deg)' : 'rotateY(0deg)'),
   },
   front: {
-    height: 210,
+    height: props => props.size || 210,
     width: '100%',
     backfaceVisibility: 'hidden',
     position: 'absolute',
@@ -32,7 +32,7 @@ const useStyles = makeStyles({
     padding: '1rem',
   },
   back: {
-    height: 210,
+    height: props => props.size || 210,
     width: '100%',
     backfaceVisibility: 'hidden',
     position: 'absolute',
@@ -61,12 +61,13 @@ const Content = ({ classes, side, ...props }) => (
 
 const FlipCard = props => {
   const [flipped, setFlipped] = React.useState(false)
+  const { size } = props
 
-  const classes = useStyles({ flipped })
+  const classes = useStyles({ flipped, size })
   return (
-    <Grid item xs={12} sm={4} md={3} className={classes.root} >
+    <Grid item xs={12} sm={4} md={3} className={classes.root}>
       <div className={`${classes.perspective} ${classes.card}`} onClick={() => setFlipped(!flipped)}>
-        <div className={classes.cardContainer} >
+        <div className={classes.cardContainer}>
           {['front', 'back'].map(side => (
             <Content classes={classes} side={side}>
               {props[side]}

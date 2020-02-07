@@ -17,6 +17,7 @@ import Login from 'scenes/auth/login'
 import Register from 'scenes/auth/register'
 import User from 'scenes/user'
 import Decks from 'scenes/decks'
+import SingleDeck from 'scenes/decks/singleDeck'
 import CreateDeckView from 'scenes/decks/create'
 
 const useStyles = makeStyles(theme => ({
@@ -88,6 +89,7 @@ export default function App() {
           <Route exact path="/login" component={Login} />
           <PrivateRoute exact path="/user" component={User} />
           <PrivateRoute exact path="/decks/create" component={CreateDeckView} />
+          <PrivateRoute exact path="/decks/:deckId" component={SingleDeck} />
           <PrivateRoute exact path="/decks" component={Decks} />
           <PrivateRoute exact path="/" component={Home} />
         </Grid>

@@ -115,9 +115,6 @@ function Login() {
                     onChange={handleChange('password')}
                   />
                 </Grid>
-                <Grid item xs={12}>
-                  <Divider />
-                </Grid>
               </Grid>
             </CardContent>
             <CardActions className={classes.actions}>
