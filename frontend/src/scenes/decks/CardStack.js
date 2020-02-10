@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { useSpring, useSprings, animated as a, interpolate } from 'react-spring'
-import { useGesture } from 'react-use-gesture'
+import { useSpring, animated as a, interpolate } from 'react-spring'
+import { useDrag } from 'react-use-gesture'
 
 import styled from 'styled-components'
 import Grid from '@material-ui/core/Grid'
@@ -37,48 +37,42 @@ const Back = styled(C)`
   transform: rotateY(0deg);
   background: blue;
 `
-const to = i => ({ x: 0, y: i * -4, scale: 1, rot: -10 + Math.random() * 20, delay: i * 100 })
-const from = i => ({ x: 0, rot: 0, scale: 1.5, y: -1000 })
-const trans = (r, s) =>
-  `perspective(1500px) rotateX(30deg) rotateY(${r / 10}deg) rotateZ(${r}deg) scale(${s})`
 
 function CardStack({ front, back, handleNextCard, handlePrevCard }) {
   const [flipped, setFlip] = useState(false)
-
-  const [props, set] = useSpring({
+  const { x, y, size, transform, opacity } = useSpring({
+    x: 0,
+    y: 0,
+    size: 1,
+    transform: `perspective(600px) rotateY(${flipped ? 180 : 0}deg)`,
     opacity: flipped ? 1 : 0,
-    transform: `perspective(1600px) rotateY(${flipped ? 180 : 0}deg)`,
-    config: { mass: 5, tension: 500, friction: 80 },
-    ...to(0),
-    from: from(0),
   })
-  const bind = useGesture(({ down, delta: [xDelta], distance, direction: [xDir], velocity }) => {
-    const trigger = velocity > 0.2 // If you flick hard enough it should trigger the card to fly out
-    const dir = xDir < 0 ? -1 : 1 // Direction should either point left or right
-    const x = down ? xDelta : 0
-    const rot = xDelta / 100
-    const scale = down ? 1.1 : 1
+  const bind = useDrag(({ down, tap, movement: [mx, my] }) => {
+    console.log({ down, tap, mov: [mx, my] })
+    if (tap) {
+      setFlip(!flipped)
+    }
+    x = down ? mx : 0
+    /*
+    
     set({
-      x,
-      rot,
-      scale,
-      delay: undefined,
-      config: { friction: 50, tension: down ? 800 : 500 },
+      x: down ? mx : 0,
+      y: down ? my : 0,
+      size: down ? 1.1 : 1,
+      opacity,
+      transform,
     })
+    */
   })
+  React.useEffect(() => console.log(flipped), [flipped])
 
   return (
-    <Grid onClick={() => setFlip(state => !state)} style={{ width: 500, height: 420 }}>
-      <a.div style={{ transform: interpolate([props.x, props.y], (x, y) => `translate3d(${x}px,${y}px,0)`) }}>
-        <Back style={{ opacity: props.opacity.interpolate(o => 1 - o), transform: props.transform }}>
+    <Grid style={{ width: 500, height: 420 }}>
+      <a.div {...bind()} style={{ x, y }}>
+        <Back style={{ opacity: opacity.interpolate(o => 1 - o), transform }}>
           <CardContent>{back}</CardContent>
         </Back>
-        <Front
-          style={{
-            opacity: props.opacity,
-            transform: props.transform.interpolate(t => `${t} rotateY(180deg)`),
-          }}
-        >
+        <Front style={{ opacity, transform: transform.interpolate(t => `${t} rotateY(180deg)`) }}>
           <CardContent>{front}</CardContent>
         </Front>
       </a.div>
