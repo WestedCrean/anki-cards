@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     paddingRight: 16,
     [theme.breakpoints.down('sm')]: {
       paddingRight: 'initial',
-      paddingBottom: 16
+      paddingBottom: 16,
     },
   },
   gridList: {
@@ -137,7 +137,6 @@ export default function CreateDeckView() {
             </Grid>
             <Grid xs={12} md={5} item>
               <Button
-
                 disabled={!cardFinished}
                 variant="contained"
                 color="primary"

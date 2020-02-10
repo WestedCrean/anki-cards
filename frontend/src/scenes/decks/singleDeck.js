@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
-import FlipCard from './flipCard'
+import CardStack from './CardStack'
 import Alert from '@material-ui/lab/Alert'
 import Snackbar from '@material-ui/core/Snackbar'
 import red from '@material-ui/core/colors/red'
@@ -105,31 +105,23 @@ function SingleDeck() {
           <Typography variant="h4" component="h1" gutterBottom align="left">
             {deck && deck.name}
           </Typography>
+          <Typography variant="h5" component="h2" gutterBottom align="left">
+            Liczba kart: {deck && deck.cards.length}
+          </Typography>
 
-          <Grid container spacing={3}>
-            <FlipCard
-              front={deck ? deck.cards[currentCard].front : ''}
-              back={deck ? deck.cards[currentCard].back : ''}
-              size={'30vh'}
-            />
-            <Button
-              fullWidth
-              color="primary"
-              variant="outlined"
-              disabled={deck && deck.cards.length - 1 === currentCard}
-              onClick={() => {}}
-            >
-              Następna karta
-            </Button>
-            <Button
-              fullWidth
-              color="primary"
-              variant="outlined"
-              disabled={deck && currentCard === 0}
-              style={{ marginTop: 10 }}
-            >
-              Poprzednia karta
-            </Button>
+          <Grid container justify="center" alignItems="center" spacing={3}>
+            <Grid item xs={12} className={classes.root}>
+              <CardStack
+                front={deck ? deck.cards[currentCard].front : ''}
+                back={deck ? deck.cards[currentCard].back : ''}
+                handleNextCard={() => {
+                  deck && deck.cards.length - 1 !== currentCard && setCurrentCard(currentCard + 1)
+                }}
+                handlePrevCard={() => {
+                  deck && currentCard !== 0 && setCurrentCard(currentCard - 1)
+                }}
+              />
+            </Grid>
           </Grid>
         </Box>
       </Container>

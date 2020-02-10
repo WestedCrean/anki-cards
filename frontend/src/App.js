@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter as Router, Link, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Link, Route, Switch } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -85,13 +85,15 @@ export default function App() {
       <Router>
         <NavBar />
         <Grid>
-          <Route exact path="/register" component={Register} />
-          <Route exact path="/login" component={Login} />
-          <PrivateRoute exact path="/user" component={User} />
-          <PrivateRoute exact path="/decks/create" component={CreateDeckView} />
-          <PrivateRoute exact path="/decks/:deckId" component={SingleDeck} />
-          <PrivateRoute exact path="/decks" component={Decks} />
-          <PrivateRoute exact path="/" component={Home} />
+          <Switch>
+            <Route exact path="/register" component={Register} />
+            <Route exact path="/login" component={Login} />
+            <PrivateRoute exact path="/user" component={User} />
+            <PrivateRoute exact path="/decks/create" component={CreateDeckView} />
+            <PrivateRoute exact path="/decks/:deckId" component={SingleDeck} />
+            <PrivateRoute exact path="/decks" component={Decks} />
+            <PrivateRoute exact path="/" component={Home} />
+          </Switch>
         </Grid>
       </Router>
     </AuthContext.Provider>
